@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="connect">连接</button>
+    <button id="send" disabled="true">发送数据</button></br>
+    从服务端发送的数据如下:</br>
+    <span id="rec"></span>
+    <script>
+        let connect=document.querySelector('#connect')
+        let send=document.querySelector('#send')
+        let rec=document.querySelector('#rec')
+        let ws=null
+        connect.onclick=function(){
+            ws=new WebSocket('ws://localhost:9998')
+            ws.onopen=()=>{
+                 console.log('连接服务端成功了');
+                 send.disabled=false
+            }
+            ws.onclose=()=>{
+                console.log('连接服务端失败');
+                send.disabled=true
+            }
+            ws.onmessage=(msg)=>{
+                console.log('接收到从服务端来的数据了');
+                console.log(msg);
+                rec.innerHTML=msg.data
+            } 
+        }
+        send.onclick=function(){
+            ws.send(JSON.stringify({
+                action: 'fullScreen',
+                socketType: 'fullScreen',
+                chartName: 'trend',
+                value: 'true'
+            }))
+        }
+    </script>
+</body>
+</html>
